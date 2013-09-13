@@ -56,16 +56,13 @@ void loop() {
         Serial.write(c);
         if (c == '\n' && currentLineIsBlank) {
           //End of Request
-          Serial.println("THE END");
-          Serial.println(firstLine);
-          sendResponse(client);
+          router(client, firstLine);
           break;
         }
         if (c == '\n') {
           // you're starting a new line
           currentLineIsBlank = true;
           lineNum++;
-          Serial.println(lineNum);
         } 
         else if (c != '\r') {
           // you've gotten a character on the current line
@@ -85,16 +82,31 @@ void toggleSeeds() {
     for(pos = 0; pos < 180; pos += 1)  // goes from 0 degrees to 180 degrees 
     {                                  // in steps of 1 degree 
       myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(15);                       // waits 15ms for the servo to reach the position 
+      delay(10);                       // waits 15ms for the servo to reach the position 
     }
   }
   else {
     for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
     {                                
       myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(15);                       // waits 15ms for the servo to reach the position 
+      delay(10);                       // waits 15ms for the servo to reach the position 
     } 
   }
+}
+
+void router(EthernetClient client, String firstLine) {
+  Serial.println("THE END");
+  Serial.println(firstLine);
+  if(firstLine.indexOf("GET") < 0) {
+    //TODO send 404
+    Serial.println("404");
+  }
+  if(firstLine.indexOf("/feedTheBird") >= 0) {
+    Serial.println("Feeding...");
+    toggleSeeds();
+    sendResponse(client);
+  }
+  Serial.println("Uh oh, none of the above");
 }
 
 void sendResponse(EthernetClient client) {
@@ -108,6 +120,5 @@ void sendResponse(EthernetClient client) {
   client.println("<html>");
   client.println("<p>check out the motor</p>");
   client.println("</html>");
-  toggleSeeds();
 }
 
