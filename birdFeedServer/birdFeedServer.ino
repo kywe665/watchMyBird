@@ -1,23 +1,14 @@
 /*
-  Web Server
+  birdFeedServer
  
- A simple web server that shows the value of the analog input pins.
- using an Arduino Wiznet Ethernet shield. 
- 
- Circuit:
- * Ethernet shield attached to pins 10, 11, 12, 13
- * Analog inputs attached to pins A0 through A5 (optional)
- 
- created 18 Dec 2009
- by David A. Mellis
- modified 9 Apr 2012
- by Tom Igoe
+ Send a request and feed the bird.
  
  */
 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Servo.h>
+#include <TextFinder.h>
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
@@ -53,47 +44,41 @@ void loop() {
   EthernetClient client = server.available();
   if (client) {
     Serial.println("new client");
-    // an http request ends with a blank line
+    String firstLine = "";
     boolean currentLineIsBlank = true;
+    int lineNum = 0;
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
+        if(lineNum == 0) {
+          firstLine.concat(c);
+        }
         Serial.write(c);
-        // if you've gotten to the end of the line (received a newline
-        // character) and the line is blank, the http request has ended,
-        // so you can send a reply
         if (c == '\n' && currentLineIsBlank) {
-          // send a standard http response header
-          client.println("HTTP/1.1 200 OK");
-          client.println("Content-Type: text/html");
-          client.println("Connection: close");  // the connection will be closed after completion of the response
-	  client.println("Refresh: 5");  // refresh the page automatically every 5 sec
-          client.println();
-          //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
-          client.println("<!DOCTYPE HTML>");
-          client.println("<html>");
-          client.println("<p>check out the motor</p>");
-          client.println("</html>");
-          toggleSeeds();
+          //End of Request
+          Serial.println("THE END");
+          Serial.println(firstLine);
+          sendResponse(client);
           break;
         }
         if (c == '\n') {
           // you're starting a new line
           currentLineIsBlank = true;
+          lineNum++;
+          Serial.println(lineNum);
         } 
         else if (c != '\r') {
           // you've gotten a character on the current line
           currentLineIsBlank = false;
         }
-      }
-    }
-    // give the web browser time to receive the data
-    delay(1);
+      } // if .available()
+    } // while client.connected
+    delay(1); // give the web browser time to receive the data
     // close the connection:
     client.stop();
     Serial.println("client disonnected");
-  }
-}
+  } // if client
+} // loop
 
 void toggleSeeds() {
   if(pos < 90) {
@@ -104,11 +89,25 @@ void toggleSeeds() {
     }
   }
   else {
-    for(pos = 180; pos>=1; pos-=1)     // goes from 180 degrees to 0 degrees 
+    for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
     {                                
       myservo.write(pos);              // tell servo to go to position in variable 'pos' 
       delay(15);                       // waits 15ms for the servo to reach the position 
     } 
   }
+}
+
+void sendResponse(EthernetClient client) {
+  // send a standard http response header
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");  // the connection will be closed after completion of the response
+  client.println();
+  //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
+  client.println("<!DOCTYPE HTML>");
+  client.println("<html>");
+  client.println("<p>check out the motor</p>");
+  client.println("</html>");
+  toggleSeeds();
 }
 
