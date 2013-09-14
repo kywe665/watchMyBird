@@ -95,18 +95,18 @@ void toggleSeeds() {
 }
 
 void router(EthernetClient client, String firstLine) {
-  Serial.println("THE END");
-  Serial.println(firstLine);
-  if(firstLine.indexOf("GET") < 0) {
-    //TODO send 404
-    Serial.println("404");
+  if(firstLine.indexOf("GET /") < 0) {
+    notAccepted(client);
+    return;
   }
-  if(firstLine.indexOf("/feedTheBird") >= 0) {
+  else if(firstLine.indexOf("/feedTheBird") >= 0) {
     Serial.println("Feeding...");
     toggleSeeds();
     sendResponse(client);
   }
-  Serial.println("Uh oh, none of the above");
+  else {
+    notFound(client);
+  }
 }
 
 void sendResponse(EthernetClient client) {
@@ -122,3 +122,27 @@ void sendResponse(EthernetClient client) {
   client.println("</html>");
 }
 
+void notAccepted(EthernetClient client) {
+  Serial.println("405 Not Allowed");
+  // send a standard http response header
+  client.println("HTTP/1.1 405 Method Not Allowed");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");  // the connection will be closed after completion of the response
+  client.println();/*
+  client.println("<!DOCTYPE HTML>");
+  client.println("<html>");
+  client.println("<h1>only GET is allowed</h1>");
+  client.println("</html>");*/
+}
+void notFound(EthernetClient client) {
+  Serial.println("404 Not Found");
+  // send a standard http response header
+  client.println("HTTP/1.1 404 Not Found");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");  // the connection will be closed after completion of the response
+  client.println();
+  client.println("<!DOCTYPE HTML>");
+  client.println("<html>");
+  client.println("<h1>Not Found</h1>");
+  client.println("</html>");
+}
