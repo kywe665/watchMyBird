@@ -9,6 +9,8 @@
 #include <Ethernet.h>
 #include <Servo.h>
 #include <TextFinder.h>
+#include <stdlib.h>
+#include <math.h>
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
@@ -24,6 +26,8 @@ EthernetServer server(80);
 //Setup servo
 Servo myservo;
 int pos = 0;
+int maxSwing = 165;
+int minSwing = 5;
 
 void setup() {
  // Open serial communications and wait for port to open:
@@ -78,20 +82,15 @@ void loop() {
 } // loop
 
 void toggleSeeds() {
-  if(pos < 90) {
-    for(pos = 0; pos < 180; pos += 1)  // goes from 0 degrees to 180 degrees 
-    {                                  // in steps of 1 degree 
-      myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(10);                       // waits 15ms for the servo to reach the position 
-    }
+  Serial.println("Feeding...");
+  for(pos = minSwing; pos <= maxSwing; pos += 1) { 
+    myservo.write(pos);
+    delay(10);
   }
-  else {
-    for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
-    {                                
-      myservo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(10);                       // waits 15ms for the servo to reach the position 
-    } 
-  }
+  for(pos = maxSwing; pos >= minSwing; pos-=1) { 
+    myservo.write(pos);
+    delay(10);
+  }    
 }
 
 void router(EthernetClient client, String firstLine) {
@@ -100,13 +99,33 @@ void router(EthernetClient client, String firstLine) {
     return;
   }
   else if(firstLine.indexOf("/feedTheBird") >= 0) {
-    Serial.println("Feeding...");
+    checkCode(firstLine, client);
+  }
+  else {
+    notFound(client); //404
+  }
+}
+
+void checkCode(String firstLine, EthernetClient client) {
+  String code = firstLine.substring(26,36);
+  String now = firstLine.substring(44,54);
+  char floatbuf[32]; // make this at least big enough for the whole string
+  code.toCharArray(floatbuf, sizeof(floatbuf));
+  long lCode = atol(floatbuf);
+  char floatbufNow[32]; // make this at least big enough for the whole string
+  now.toCharArray(floatbufNow, sizeof(floatbufNow));
+  long lNow = atol(floatbufNow);
+  Serial.println(String(lCode));
+  Serial.println(String(lNow));
+  Serial.println(String(abs(lCode - lNow)));
+  Serial.println(String(abs(lNow - lCode)));  
+  if(abs(lNow - lCode) <= 1800) {
     toggleSeeds();
     sendResponse(client);
   }
   else {
-    notFound(client);
-  }
+    invalidFeedCode(client);
+  }  
 }
 
 void sendResponse(EthernetClient client) {
@@ -119,6 +138,18 @@ void sendResponse(EthernetClient client) {
   client.println("<!DOCTYPE HTML>");
   client.println("<html>");
   client.println("<p>check out the motor</p>");
+  client.println("</html>");
+}
+void invalidFeedCode(EthernetClient client) {
+  // send a standard http response header
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");  // the connection will be closed after completion of the response
+  client.println();
+  //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
+  client.println("<!DOCTYPE HTML>");
+  client.println("<html>");
+  client.println("<p>invalid feed code</p>");
   client.println("</html>");
 }
 
