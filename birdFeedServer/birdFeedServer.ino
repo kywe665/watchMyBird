@@ -98,6 +98,10 @@ void router(EthernetClient client, String firstLine) {
     notAccepted(client);
     return;
   }
+  else if(firstLine.indexOf("/feedTheBirdOverride") >= 0) {
+    toggleSeeds();
+    sendResponse(client);
+  }
   else if(firstLine.indexOf("/feedTheBird") >= 0) {
     checkCode(firstLine, client);
   }
@@ -107,6 +111,11 @@ void router(EthernetClient client, String firstLine) {
 }
 
 void checkCode(String firstLine, EthernetClient client) {
+  if(firstLine.indexOf("feedCode=") < 0 || firstLine.indexOf("now=") < 0) {
+    Serial.println("no parameters");
+    invalidFeedCode(client);
+    return;
+  }
   String code = firstLine.substring(26,36);
   String now = firstLine.substring(44,54);
   char floatbuf[32]; // make this at least big enough for the whole string
@@ -118,7 +127,12 @@ void checkCode(String firstLine, EthernetClient client) {
   Serial.println(String(lCode));
   Serial.println(String(lNow));
   Serial.println(String(abs(lCode - lNow)));
-  Serial.println(String(abs(lNow - lCode)));  
+  Serial.println(String(abs(lNow - lCode)));
+  if(lNow <= 1380001365 || lCode <= 1380001365) {
+    Serial.println("bad code");
+    invalidFeedCode(client);
+    return;
+  } 
   if(abs(lNow - lCode) <= 1800) {
     toggleSeeds();
     sendResponse(client);
