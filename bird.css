@@ -53,7 +53,7 @@ button:active {
 }
 /*PORTFOLIO*/
 .portfolio {
-  background: url('./images/dot-pattern.gif') repeat transparent;
+  background: url('../images/dot-pattern.gif') repeat transparent;
 }
 .portfolio .wrapper {
   margin: 0 auto -80px auto;
