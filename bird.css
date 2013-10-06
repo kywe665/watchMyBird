@@ -9,7 +9,7 @@ body {
   font-family: 'Arial';
 }
 .index .wrapper {
-  background: url('./images/dot-pattern.gif') repeat transparent;
+  background: url('../images/dot-pattern.gif') repeat transparent;
   min-height: 100%;
   height: auto !important;
   height: 100%;
@@ -239,3 +239,10 @@ padding: 0 30px;
 	        width: 960px;
 	        margin: 0 auto 0 auto;
 	    }
+
+#webcamStream {
+    background: #222;
+    height: 400px;
+    width: 720px;
+    color: #CCC;
+}

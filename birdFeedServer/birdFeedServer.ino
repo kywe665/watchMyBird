@@ -128,6 +128,7 @@ void checkCode(String firstLine, EthernetClient client) {
   Serial.println(String(lNow));
   Serial.println(String(abs(lCode - lNow)));
   Serial.println(String(abs(lNow - lCode)));
+  //sanity check the code
   if(lNow <= 1380001365 || lCode <= 1380001365) {
     Serial.println("bad code");
     invalidFeedCode(client);
@@ -146,6 +147,7 @@ void sendResponse(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: application/json");
+  client.println("Access-Control-Allow-Origin: *");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
@@ -155,6 +157,7 @@ void invalidFeedCode(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: application/json");
+  client.println("Access-Control-Allow-Origin: *");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
@@ -166,6 +169,7 @@ void notAccepted(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: application/json");
+  client.println("Access-Control-Allow-Origin: *");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   client.println("{\"response\":405,\"code\":false,\"fed\":false}");
@@ -175,6 +179,7 @@ void notFound(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: application/json");
+  client.println("Access-Control-Allow-Origin: *");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   client.println("{\"response\":404,\"code\":false,\"fed\":false}");
