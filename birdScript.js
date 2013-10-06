@@ -4,7 +4,7 @@
             var code = $('#feedCode').val();
             console.log(code);
             decode = parseInt(code, 19);
-            $.get("http://192.168.0.177/feedTheBird?feedCode="+decode+"&now="+Date.now(), function (data, status) {
+            $.get("http://67.170.74.247:6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(), function (data, status) {
                 console.log(status);
                 console.log(data);
             });
