@@ -145,49 +145,37 @@ void checkCode(String firstLine, EthernetClient client) {
 void sendResponse(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
-  client.println("Content-Type: text/html");
+  client.println("Content-Type: application/json");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-  client.println("<p>check out the motor</p>");
-  client.println("</html>");
+  client.println("{\"response\":200,\"code\":true,\"fed\":true}");
 }
 void invalidFeedCode(EthernetClient client) {
   // send a standard http response header
   client.println("HTTP/1.1 200 OK");
-  client.println("Content-Type: text/html");
+  client.println("Content-Type: application/json");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
   //client.println("<meta http-equiv='refresh' content='0;URL=http://www.facebook.com/sharer.php?s=100&p[url]=http://i2.kym-cdn.com/entries/icons/original/000/000/590/marker_pwned.jpg&p[title]=Kyle%20tricked%20me%20with%20his%20arduino'>");
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-  client.println("<p>invalid feed code</p>");
-  client.println("</html>");
+  client.println("{\"response\":200,\"code\":false,\"fed\":false}");
 }
 
 void notAccepted(EthernetClient client) {
   Serial.println("405 Not Allowed");
   // send a standard http response header
-  client.println("HTTP/1.1 405 Method Not Allowed");
-  client.println("Content-Type: text/html");
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: application/json");
   client.println("Connection: close");  // the connection will be closed after completion of the response
-  client.println();/*
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-  client.println("<h1>only GET is allowed</h1>");
-  client.println("</html>");*/
+  client.println();
+  client.println("{\"response\":405,\"code\":false,\"fed\":false}");
 }
 void notFound(EthernetClient client) {
   Serial.println("404 Not Found");
   // send a standard http response header
-  client.println("HTTP/1.1 404 Not Found");
-  client.println("Content-Type: text/html");
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: application/json");
   client.println("Connection: close");  // the connection will be closed after completion of the response
   client.println();
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-  client.println("<h1>Not Found</h1>");
-  client.println("</html>");
+  client.println("{\"response\":404,\"code\":false,\"fed\":false}");
 }
