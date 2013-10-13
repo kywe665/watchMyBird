@@ -207,6 +207,13 @@ padding: 0 30px;
 .portfolio .page .nav-container .nav a:hover {
   color: #1AC8FF;
 }
+.differentShare {
+    color: #837B6F!important;
+}
+.differentShare:hover{
+    cursor:default;
+    color: #837B6F!important;
+}
 .portfolio .header {
   width: 100%;
   height: 60px;
