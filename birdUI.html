@@ -29,7 +29,11 @@
           <div class='css-triangle'></div>
 
           <div class='css-project-description'>
-            <div id="webcamStream">Webcam goes here</div>
+            <div id="webcamStream">
+                <video width="720" height="400" poster="http://67.170.74.247:6548/video.cgi" >
+                    <source src="http://67.170.74.247:6548/video.cgi" type="audio/ogg" />
+                </video>
+            </div>
             <p>Insert Feed Code</p>
             <input type="text" id="feedCode" />
             <button class="js-feed">Feed The Birds</button>
