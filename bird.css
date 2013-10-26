@@ -16,6 +16,16 @@ body {
   margin: 0 auto -80px auto;
   /*The -100px mentioned above needs to be the exact height of the footer.*/
 }
+#stream{
+    height:400px;
+    position: relative;
+    left: 93px;
+}
+#canvasBackup {
+    
+    position: relative;
+    left: 93px;
+}
 .portfolio .css-center .css-name {
 float: left;
 width: 230px;
