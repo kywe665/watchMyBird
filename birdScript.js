@@ -11,6 +11,9 @@
         $('.js-feed').on('click', function () {
             feedRequest();
         });
+        $('.js-slowStream').on('click', function () {
+            $('.browser-warning#incompatible').addClass('css-hidden');
+        });
         $('#feedCode').on('keyup', function (evt) {
             var keycode = evt.keyCode || evt.which;
             if (keycode == 13) {
@@ -25,13 +28,17 @@
                 $(this).attr('type', 'text');
             }
         });
-        $('#stream').attr('src', 'http://bit.ly/1ccY67W').load(function () {
+        $('#stream').attr('src', 'http://67.170.74.247:6548/video.cgi').load(function () {
             //stream working
         }).error(function (e) {
             console.log(JSON.stringify(e));
             alert(JSON.stringify(e));
             if (!isChrome && !isFirefox) {
+                $('.browser-warning#incompatible').removeClass('css-hidden');
                 canvasBackup();
+                if (isSafari) {
+                    bashApple();
+                }
             }
         });
     });
@@ -54,15 +61,53 @@
         var ctx = document.getElementById('canvasBackup').getContext('2d');
         var img = new Image();
         var count = 0;
+        var errorCount = 0;
         img.onload = function () {
             console.log('draw');
-            //TODO FIX CANVAS SIZE
-            ctx.drawImage(img, 0, 0, 534,400);
-        };
-        setInterval(function () {
-            console.log('again');
-            img.src = "http://kywe665.com/feedMyBird/birdStatus" + (count % 3 + 1) + ".jpg";
+            console.log(img.height);
+            ctx.drawImage(img, 0, 0, 534, 400);
             count++;
-        }, 450);
+            loadNext(img, count);
+        };
+        img.onerror = function (message, source, line) {
+            console.log('error' + errorCount);
+            errorCount++;
+            loadNext(img, count);
+        };
+        img.onabort = function () {
+            console.log('abort');
+        };
+        console.log('first');
+        img.src = "http://kywe665.com/feedMyBird/birdStatus1.jpg";
+    }
+    function loadNext(img, count) {
+        setTimeout(function () {
+            console.log('loadNext');
+            qparam = ranNum() + "=" + ranNum() + "&" + ranNum();
+            img.src = "http://kywe665.com/feedMyBird/birdStatus" + (count % 3 + 1) + ".jpg?" + qparam;
+        }, 300);
+    }
+    function ranNum() {
+        return Math.round(Math.exp(Math.random() * Math.log(100000 - 0 + 1))) + 0;
+    }
+    function bashApple() {
+        var msg = ''
+          , deviceType = 'device'
+        ;
+        $('#incompatible .warning-container').append('<img class="warning-logo" src="http://kywe665.com/feedMyBird/appleWhite.png"/>');
+        if (navigator.userAgent.match(/iPhone/i)) {
+            deviceType = 'iPhone'; 
+        }
+        else if (navigator.userAgent.match(/iPad/i)) {
+            deviceType = 'iPad';
+        }
+        else if (navigator.userAgent.match(/iPod/i)) {
+            deviceType = 'iPod';
+        }
+        else if (screen.width > 480) {
+            deviceType = 'browser';
+        }
+        msg = 'Your ' + deviceType + ' does not support some of the latest technology standards. Apple <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-dev/vYGxPx-tVKE" target="_blank">even prevents</a> the iOS Chrome app from supporting the required technology.';
+        $('#incompatible .warning-message').html(msg);
     }
 })();

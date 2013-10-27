@@ -22,9 +22,49 @@ body {
     left: 93px;
 }
 #canvasBackup {
-    
     position: relative;
     left: 93px;
+}
+.browser-warning {
+    position: absolute;
+    width: 500px;
+    height: 400px;
+    z-index: 9;
+    color: white;
+    padding: 0 110px;
+}
+.warning-overlay {
+    background: #333;
+    opacity: 0.8;
+    position: absolute;
+    width: 500px;
+    height: 400px;
+    padding: 0 110px;
+    left: 0px;
+}
+.warning-container {
+    position:relative;
+}
+    .warning-container h1 {
+        font-size: 2.5em;
+    }
+    .warning-container p {
+        font-size: 23px;
+    }
+    .warning-container a {
+        color: lightblue;
+        text-decoration: none;
+    }
+.js-slowStream {
+    background-color: yellow;
+    font-size: 16px;
+    padding: 6px 10px 10px 10px;
+}
+.warning-logo {
+    height: 65px;
+    position: absolute;
+    left: 190px;
+    top: -10px;
 }
 .portfolio .css-center .css-name {
 float: left;
