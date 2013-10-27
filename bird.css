@@ -66,6 +66,19 @@ body {
     left: 190px;
     top: -10px;
 }
+#feed-loader{
+    position: absolute;
+    margin-left: 8px;
+}
+#feed-loader span{
+    position: relative;
+    top: -5px;
+    left: 2px;
+}
+#feedCode.feed-failed {
+    border: 2px solid red;
+    border-radius: 3px;
+}
 .portfolio .css-center .css-name {
 float: left;
 width: 230px;

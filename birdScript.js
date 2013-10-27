@@ -44,15 +44,31 @@
     });
     function feedRequest() {
         var code = $('#feedCode').val();
+        uiSendFeed();
         if (code != feedOverride) {
             decode = parseInt(code, 19);
         } else {
             decode = Date.now();
         }
-        $.get("http://67.170.74.247:6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(), function (data, status) {
-            console.log(status);
-            console.log(data);
+        $.ajax({
+            url: "http://67.170.74.247:6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(),
+            type: 'GET',
+            success: function (data) {
+                console.log('success');
+                console.log(data);
+                $('#feed-loader').addClass('css-hidden');
+            },
+            error: function (e) {
+                console.log('error');
+                console.log(e);
+                $('#feed-loader').addClass('css-hidden');
+                disconnectedMsg(true);
+            }
         });
+    }
+    function uiSendFeed() {
+        $('#feed-loader').removeClass('css-hidden');
+        disconnectedMsg(false);
     }
     function canvasBackup() {
         //If the browser cannot stream mjpg, use canvas.
@@ -109,5 +125,15 @@
         }
         msg = 'Your ' + deviceType + ' does not support some of the latest technology standards. Apple <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-dev/vYGxPx-tVKE" target="_blank">even prevents</a> the iOS Chrome app from supporting the required technology.';
         $('#incompatible .warning-message').html(msg);
+    }
+    function disconnectedMsg(show) {
+        if (show) {
+            $('#feed-disconnected').removeClass('css-hidden');
+            $('#feedCode').addClass('feed-failed');
+        }
+        else {
+            $('#feed-disconnected').addClass('css-hidden');
+            $('#feedCode').removeClass('feed-failed');
+        }
     }
 })();
