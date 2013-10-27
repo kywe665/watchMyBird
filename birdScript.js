@@ -32,7 +32,6 @@
             //stream working
         }).error(function (e) {
             console.log(JSON.stringify(e));
-            alert(JSON.stringify(e));
             if (!isChrome && !isFirefox) {
                 $('.browser-warning#incompatible').removeClass('css-hidden');
                 canvasBackup();
@@ -57,6 +56,8 @@
                 console.log('success');
                 console.log(data);
                 $('#feed-loader').addClass('css-hidden');
+                //TODO check response for incorrect code.
+                //incorrectCode(true);
             },
             error: function (e) {
                 console.log('error');
@@ -69,6 +70,7 @@
     function uiSendFeed() {
         $('#feed-loader').removeClass('css-hidden');
         disconnectedMsg(false);
+        incorrectCode(false);
     }
     function canvasBackup() {
         //If the browser cannot stream mjpg, use canvas.
@@ -133,6 +135,16 @@
         }
         else {
             $('#feed-disconnected').addClass('css-hidden');
+            $('#feedCode').removeClass('feed-failed');
+        }
+    }
+    function incorrectCode(show) {
+        if (show) {
+            $('#incorrect-code').removeClass('css-hidden');
+            $('#feedCode').addClass('feed-failed');
+        }
+        else {
+            $('#incorrect-code').addClass('css-hidden');
             $('#feedCode').removeClass('feed-failed');
         }
     }
