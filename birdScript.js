@@ -28,19 +28,41 @@
                 $(this).attr('type', 'text');
             }
         });
+        loadStream(0);
+    });
+    function loadStream(tryCount) {
+        var timeWait = 10 * 1000; //10 sec
+        if (tryCount > 0) { timeWait = 20 * 1000;}
+        var loaded = setTimeout(function () {
+            errorHandle(true, tryCount, loaded);
+        }, timeWait);
         $('#stream').attr('src', 'http://67.170.74.247:6548/video.cgi').load(function () {
             //stream working
+            clearTimeout(loaded);
         }).error(function (e) {
             console.log(JSON.stringify(e));
-            if (!isChrome && !isFirefox) {
-                $('.browser-warning#incompatible').removeClass('css-hidden');
-                canvasBackup();
-                if (isSafari) {
-                    bashApple();
-                }
-            }
+            errorHandle(false, tryCount, loaded);
         });
-    });
+    }
+    function errorHandle(timeout, tryCount, errorTimer) {
+        if (!isChrome && !isFirefox) {
+            $('.browser-warning#incompatible').removeClass('css-hidden');
+            canvasBackup(errorTimer);
+            if (isSafari) {
+                bashApple();
+            }
+        }
+        else {
+            if (timeout && tryCount < 2) {
+                loadStream(tryCount + 1);
+            }
+            else {
+                //TODO something is wrong message
+                $('.browser-warning#incompatible').removeClass('css-hidden');
+                canvasBackup(errorTimer);
+            }
+        }
+    }
     function feedRequest() {
         var code = $('#feedCode').val();
         uiSendFeed();
@@ -72,8 +94,9 @@
         disconnectedMsg(false);
         incorrectCode(false);
     }
-    function canvasBackup() {
+    function canvasBackup(errorTimer) {
         //If the browser cannot stream mjpg, use canvas.
+        clearTimeout(errorTimer);
         $('#canvasBackup').removeClass("css-hidden");
         $('#stream').addClass("css-hidden");
         var ctx = document.getElementById('canvasBackup').getContext('2d');
@@ -125,7 +148,7 @@
         else if (screen.width > 480) {
             deviceType = 'browser';
         }
-        msg = 'Your ' + deviceType + ' does not support some of the latest technology standards. Apple <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-dev/vYGxPx-tVKE" target="_blank">even prevents</a> the iOS Chrome app from supporting the required technology.';
+        msg = 'This browser on your ' + deviceType + ' does not support some of the latest standards. Apple <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-dev/vYGxPx-tVKE" target="_blank">prevents the iOS Chrome app</a> from supporting the required technology and you must use Safari.';
         $('#incompatible .warning-message').html(msg);
     }
     function disconnectedMsg(show) {
