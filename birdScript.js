@@ -1,4 +1,5 @@
 ﻿(function () {
+    var hostname = 'http://kywe665.dlinkddns.com';
     var feedOverride = '665Override';
     var isOpera = !!window.opera || navigator.userAgent.indexOf('Opera') >= 0;
     // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
@@ -36,7 +37,7 @@
         var loaded = setTimeout(function () {
             errorHandle(true, tryCount, loaded);
         }, timeWait);
-        $('#stream').attr('src', 'http://67.170.74.247:6548/video.cgi').load(function () {
+        $('#stream').attr('src', hostname+':6548/video.cgi').load(function () {
             //stream working
             clearTimeout(loaded);
         }).error(function (e) {
@@ -72,7 +73,7 @@
             decode = Date.now();
         }
         $.ajax({
-            url: "http://67.170.74.247:6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(),
+            url: hostname+":6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(),
             type: 'GET',
             success: function (data) {
                 $('#feed-loader').addClass('css-hidden');
