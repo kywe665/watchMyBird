@@ -87,7 +87,6 @@
         });
     }
     function feedResponse(data) {
-        console.log(data);
         if (data.response == 200) {
             if (data.code == false) {
                 showMessage('incorrect-code',true);
@@ -122,7 +121,6 @@
         var errorCount = 0;
         img.onload = function () {
             console.log('draw');
-            console.log(img.height);
             ctx.drawImage(img, 0, 0, 534, 400);
             count++;
             loadNext(img, count);
