@@ -75,24 +75,41 @@
             url: "http://67.170.74.247:6547/feedTheBird?feedCode=" + decode + "&now=" + Date.now(),
             type: 'GET',
             success: function (data) {
-                console.log('success');
-                console.log(data);
                 $('#feed-loader').addClass('css-hidden');
-                //TODO check response for incorrect code.
-                //incorrectCode(true);
+                feedResponse(data);
             },
             error: function (e) {
                 console.log('error');
                 console.log(e);
                 $('#feed-loader').addClass('css-hidden');
-                disconnectedMsg(true);
+                showMessage('feed-disconnected',true);
             }
         });
     }
+    function feedResponse(data) {
+        console.log(data);
+        if (data.response == 200) {
+            if (data.code == false) {
+                showMessage('incorrect-code',true);
+            }
+            else if (data.fed == true) {
+                showMessage('feed-success', true);
+            }
+            else {
+                showMessage('something-bad', true);
+            }
+        }
+        else {
+            showMessage('bad-request', true);
+        }
+    }
     function uiSendFeed() {
         $('#feed-loader').removeClass('css-hidden');
-        disconnectedMsg(false);
-        incorrectCode(false);
+        showMessage('feed-disconnected', false);
+        showMessage('incorrect-code', false);
+        showMessage('something-bad', false);
+        showMessage('feed-success', false);
+        showMessage('bad-request', false);
     }
     function canvasBackup(errorTimer) {
         //If the browser cannot stream mjpg, use canvas.
@@ -161,14 +178,19 @@
             $('#feedCode').removeClass('feed-failed');
         }
     }
-    function incorrectCode(show) {
+    function showMessage(id, show) {
         if (show) {
-            $('#incorrect-code').removeClass('css-hidden');
+            $('#'+id).removeClass('css-hidden');
             $('#feedCode').addClass('feed-failed');
         }
         else {
-            $('#incorrect-code').addClass('css-hidden');
+            $('#'+id).addClass('css-hidden');
             $('#feedCode').removeClass('feed-failed');
+            $('#feedCode').removeClass('feed-success');
+        }
+        if (id === 'feed-success') {
+            $('#feedCode').removeClass('feed-failed');
+            $('#feedCode').addClass('feed-success');
         }
     }
 })();

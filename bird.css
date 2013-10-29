@@ -79,6 +79,10 @@ body {
     border: 2px solid red;
     border-radius: 3px;
 }
+#feedCode.feed-success {
+    border: 2px solid green;
+    border-radius: 3px;
+}
 .portfolio .css-center .css-name {
 float: left;
 width: 230px;
