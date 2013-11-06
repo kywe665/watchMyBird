@@ -58,7 +58,6 @@
                 loadStream(tryCount + 1);
             }
             else {
-                //TODO something is wrong message
                 $('.browser-warning#incompatible').removeClass('css-hidden');
                 canvasBackup(errorTimer);
             }
